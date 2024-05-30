@@ -29,8 +29,8 @@ export default function UserServicesCard({ props, token, showDialog }: any) {
                 <Text style={styles.title}>{props?.name}</Text>
                 <Text style={styles.specialty}>{props?.specialty}</Text>
                 <View style={styles.buttonContainer}>
-                <Button onPress={() => showDialog(props)} buttonColor="#027361"><Text>Edit</Text></Button>
-                <Button onPress={deleteHandler} buttonColor="red"><Text>Delete</Text></Button>
+                <Button onPress={() => showDialog(props)} buttonColor="#027361"><Text style={{color: "white"}}>Edit</Text></Button>
+                <Button onPress={deleteHandler} buttonColor="red"><Text style={{color: "white"}}>Delete</Text></Button>
                 </View>
             </View>
         </View>
