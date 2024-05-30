@@ -6,6 +6,20 @@ import Card from "@/components/Card";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useNavigation } from "@react-navigation/native";
 
+interface Services{
+    _id: string,
+    images: string
+    name: string,
+    price: number,
+    description: string,
+    city: string,
+    provider: string,
+    category: string,
+    specialty: string,
+}
+
+interface ServicesArray extends Array<Services>{};
+
 export default function Home() {
     const Hero = require("@/assets/images/banner.png");
     const FeaturedPlaceholder = require("@/assets/images/featured-placeholder.png");
@@ -21,9 +35,10 @@ export default function Home() {
     const [token, setToken] = React.useState<string | null>(null);
     const [userId, setUserId] = React.useState<string | null>(null);
     const [isAuth, setIsAuth] = React.useState<boolean>(false);
-    const [refreshKey, setRefreshKey] = React.useState(0);
+    const [services, setServices] = React.useState<ServicesArray>([])
+    const [loading, setLoading] = React.useState(true)
 
-    const services = [
+    const menus = [
         { name: "Electronics", src: electronics },
         { name: "Plumbing", src: plumbing },
         { name: "Cleaning", src: cleaning },
@@ -48,6 +63,19 @@ export default function Home() {
         setUserId(userId);
         setIsAuth(true);
     };
+
+    async function getServices() {        
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/service", {
+        });
+        const result = await response.json();
+        setServices(result.services);
+        setLoading(false)
+        }        
+        
+        React.useEffect(() => {
+            getServices();
+        }, [])
+    console.log(services);
 
     React.useEffect(() => {
         tokenChecker();
@@ -78,7 +106,7 @@ export default function Home() {
             variant="headlineLarge"
             style={{ fontWeight: "bold", marginTop: 20, marginBottom: 10 }}
         >
-            Welcome! {isAuth ? userId : "gada"}
+            Welcome!
         </Text>
         <View
             style={{
@@ -109,7 +137,7 @@ export default function Home() {
             flexWrap: "wrap", 
             width: "100%", 
             justifyContent: "space-between"}}>
-            {services.map((service)=> {
+            {menus.map((menu)=> {
             return (
                 <Pressable style={{
                     display: "flex",
@@ -119,14 +147,14 @@ export default function Home() {
                     overflow: "visible",
                     width: 70,
                     height: 80,
-                }} onPress={() => navigation.push(`${service.name}`)}
-                    key={service.name}>
-                    <Image source={service.src} style={{
+                }} onPress={() => navigation.push(`${menu.name}`)}
+                    key={menu.name}>
+                    <Image source={menu.src} style={{
                         
                     }}/>
                     <Text variant="labelMedium" style={{
                         fontWeight: "bold",
-                    }}>{service.name}</Text>
+                    }}>{menu.name}</Text>
                 </Pressable>
             )
             })}
@@ -137,7 +165,11 @@ export default function Home() {
             marginBottom: 20
         }}>
         <Text variant="headlineLarge" style={{fontWeight: 'bold', marginTop: 20, marginBottom: 10}}>Featured</Text>
-            <Card name="Alan Smith" image={FeaturedPlaceholder} role="Hedge Specialist" rating={4.9} jobs={120} price={120000}/>      
+            {services.map((service) => (
+                <View style={{marginBottom: 8}}>
+                    <Card props={service}/>      
+                </View>
+            ))}
         </View>
         </ScrollView>
     );

@@ -11,7 +11,7 @@ export default function UserServicesCard({ props, token, showDialog }: any) {
 
     const deleteHandler = async() => {
         try {
-            const response = await fetch(`http://192.168.1.13:8000/admin/delete-service/${props._id}`, {
+            const response = await fetch(`https://handyhub-backend-production.up.railway.app/admin/delete-service/${props._id}`, {
                 method: "DELETE", 
                 headers: {Authorization : `Bearer ${token}`}
             });
@@ -24,7 +24,7 @@ export default function UserServicesCard({ props, token, showDialog }: any) {
 
     return (
         <View style={styles.cardContainer}>
-            <Image source={{ uri: `http://192.168.1.13:8000/images/${props?.images[0]}` }} style={styles.image} />
+            <Image source={{ uri: `https://handyhub-backend-production.up.railway.app/images/${props?.images[0]}` }} style={styles.image} />
             <View style={styles.infoContainer}>
                 <Text style={styles.title}>{props?.name}</Text>
                 <Text style={styles.specialty}>{props?.specialty}</Text>
@@ -45,6 +45,7 @@ const styles = StyleSheet.create({
     borderColor: "#027361",
     borderRadius: 10,
     marginBottom: 10,
+    overflow: "hidden"
     },
     image: {
     width: 120,
@@ -67,7 +68,7 @@ const styles = StyleSheet.create({
     buttonContainer: {
     display: "flex",
     flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+    justifyContent: "flex-end",
+    alignItems: "flex-end",
     },
 });

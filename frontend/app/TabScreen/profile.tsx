@@ -33,7 +33,8 @@ interface UserServicesArray extends Array<userServices>{};
 
 export default function Profile() {
   const avatar = require("@/assets/images/Bob.png");
-  const [loading, setLoading] = useState(true);
+  const [userLoading, setUserLoading] = useState(true);
+  const [servicesLoading, setServicesLoading] = useState(true);
   const [user,setUser] = React.useState<userProfile>({
     image: "",username:"",name:"",phoneNumber:"",email:"",address:"",
   });
@@ -54,20 +55,36 @@ export default function Profile() {
       router.push("Menu/login" as never);
     }
     setToken(token)
-    const response = await fetch("http://192.168.1.13:8000/admin/service", {
+    const response = await fetch("https://handyhub-backend-production.up.railway.app/profile", {
         headers: {
           Authorization : `Bearer ${token}`,
         },
     });
     const result = await response.json();    
-    setUser(result.services[0].provider);
+    setUser(result.user);
+    setUserLoading(false)
+  }  
+  
+  async function getService() {
+    const token = await AsyncStorage.getItem("token");
+    if (!token) {
+      router.push("Menu/login" as never);
+    }
+    setToken(token)
+    const response = await fetch("https://handyhub-backend-production.up.railway.app/admin/service", {
+        headers: {
+          Authorization : `Bearer ${token}`,
+        },
+    });
+    const result = await response.json();    
     setServices(result.services)
-    setLoading(false)
+    setServicesLoading(false)
   }  
 
   React.useEffect(() => {
     getProfile();
-  }, [services])
+    getService()
+  }, [services])  
 
   const showDialog = (service: userServices) => {
     setCurrentService(service);
@@ -84,7 +101,7 @@ export default function Profile() {
 
   const editHandler = async () => {
     try {
-      const response = await fetch(`http://192.168.1.13:8000/admin/edit-service/${currentService?._id}`, {
+      const response = await fetch(`https://handyhub-backend-production.up.railway.app/admin/edit-service/${currentService?._id}`, {
         method: "PATCH",
         headers: {
           Authorization: `Bearer ${token}`,
@@ -100,7 +117,7 @@ export default function Profile() {
     }
   };
 
-  if (!loading && user) {
+  if (!userLoading && user) {
     return (
       <PaperProvider>
         <ScrollView style={{
@@ -116,7 +133,7 @@ export default function Profile() {
             marginBottom: 20,
           }}>
             {user.image ?
-              <Image source={{ uri: `http://192.168.1.13:8000/images/${user.image}` }} style={{ borderRadius: 30, width: 300, height: 300, objectFit: "cover" }} />
+              <Image source={{ uri: `https://handyhub-backend-production.up.railway.app/images/${user.image}` }} style={{ borderRadius: 30, width: 300, height: 300, objectFit: "cover" }} />
               :
               <Image source={avatar} style={{ borderRadius: 30, width: 300, height: 300, objectFit: "cover" }} />
             }
@@ -186,15 +203,24 @@ export default function Profile() {
               fontWeight: "bold",
               marginBottom: 10,
             }}>My Services</Text>
-            {services.map((service) => (
-              <Pressable style={{ marginBottom: 20 }} key={service._id}
-                onPress={() => {navigation.push("MenuStack", {screen: "Detail", params: {
-                  id:service._id
-              }})}}
-              >
-                <UserServicesCard props={service} token={token} showDialog={showDialog} />
-              </Pressable>
-            ))}
+            {services.length === 0 ? (
+              <Text variant='bodyMedium' style={{
+                color: "#3E5155",
+                marginBottom: 10,
+              }}>You haven't applied any services yet</Text>
+            ) : 
+              <View>
+                {services.map((service) => (
+                  <Pressable style={{ marginBottom: 20 }} key={service._id}
+                    onPress={() => {navigation.push("MenuStack", {screen: "Detail", params: {
+                      id:service._id
+                  }})}}
+                  >
+                    <UserServicesCard props={service} token={token} showDialog={showDialog} />
+                  </Pressable>
+                ))}
+              </View>
+            }
           </View>
         </ScrollView>
 

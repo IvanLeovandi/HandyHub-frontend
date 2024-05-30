@@ -33,7 +33,7 @@ const Order : React.FC<Props> = ({route}) => {
         if (!token) {
             router.push("Menu/login");
         }
-        const response = await fetch("http://192.168.1.13:8000/profile", {
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/profile", {
             headers: {
                 Authorization : `Bearer ${token}`,
             },
@@ -59,7 +59,7 @@ const Order : React.FC<Props> = ({route}) => {
         setShowDatePicker(Platform.OS === 'ios');
         setDate(currentDate);
     };    
-
+    
     return (
         <View>
             {!loading 
@@ -67,7 +67,7 @@ const Order : React.FC<Props> = ({route}) => {
             ? 
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.profileSection}>
-                    <Image source={OrderPlaceholder} style={styles.profileImage} />
+                    <Image src={`https://handyhub-backend-production.up.railway.app/images/${route.params.service.images}`} style={styles.profileImage} />
                     <View style={styles.profileTextContainer}>
                     <Text style={styles.profileName}>{route.params.service.provider.name}</Text>
                     <Text style={styles.profileDetail}>
@@ -112,7 +112,7 @@ const Order : React.FC<Props> = ({route}) => {
                 <View style={styles.section}>
                     <Text style={styles.sectionTitle}>Payment Detail</Text>
                     <View style={styles.detailRow}>
-                    <Text style={styles.detailLabel}>Rate (x2):</Text>
+                    <Text style={styles.detailLabel}>Rate:</Text>
                     <Text>{route.params.service.price}</Text>
                     </View>
                     <View style={styles.detailRow}>
@@ -155,6 +155,7 @@ const Order : React.FC<Props> = ({route}) => {
         width: 120,
         height: 120,
         borderRadius: 20,
+        objectFit: "cover"
     },
     profileTextContainer: {
         marginLeft: 16,

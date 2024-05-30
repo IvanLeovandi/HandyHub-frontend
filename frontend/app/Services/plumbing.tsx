@@ -24,7 +24,7 @@ export default function Plumbing() {
     const[loading, setLoading] = React.useState(true)
     const navigation = useNavigation()
     async function getPlumbing() {        
-        const response = await fetch("http://192.168.1.13:8000/services/Plumbing", {
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/services/Plumbing", {
         });
         const result = await response.json();
         setPlumbing(result.services);

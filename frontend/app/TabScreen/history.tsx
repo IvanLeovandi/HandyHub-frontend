@@ -1,7 +1,7 @@
 import HistoryCard from '@/components/HistoryCard';
-import React from 'react'
+import React, { useState } from 'react'
 import {Text} from "react-native-paper"
-import { View, Image, Pressable } from "react-native";
+import { View, Image, Pressable, ScrollView } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import { useRouter } from 'expo-router';
@@ -26,6 +26,7 @@ interface HistoryArray extends Array<History>{};
 export default function History() {
   const[historyOrder, setHistoryOrder] = React.useState<HistoryArray>([]);
   const [loading, setLoading] = React.useState(true);
+  const[token, setToken] = useState<string | null>("")
 
   const navigation = useNavigation()
   const router = useRouter()
@@ -35,8 +36,9 @@ export default function History() {
     if (!token) {
       router.push("Menu/login")
     }
+    setToken(token)
     
-    const response = await fetch("http://192.168.1.13:8000/orders", {
+    const response = await fetch("https://handyhub-backend-production.up.railway.app/orders", {
       headers: {
         Authorization : `Bearer ${token}`,
       },
@@ -46,25 +48,25 @@ export default function History() {
     setHistoryOrder(history);
     setLoading(false)
   }  
-
+  
   React.useEffect(()=>{
     getHistory()
-  }, [])  
+  }, [historyOrder])  
 
   return (
-    <View>
+    <ScrollView>
       {!loading ? 
         <View style={{padding: 30}}>
           <Text variant="displayMedium" style={{fontWeight: "bold", marginBottom: 12}}>History</Text>
           {historyOrder.map((history) => (
             <Pressable style={{marginVertical: 6}} key={history._id}>
-              <HistoryCard props={history}/>
+              <HistoryCard props={history} token={token}/>
             </Pressable>
           ))}
         </View>
       : 
         <Text>Loading...</Text>
       }
-    </View>
+    </ScrollView>
   )
 }

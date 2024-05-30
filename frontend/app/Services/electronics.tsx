@@ -25,7 +25,7 @@ export default function Electronics() {
     const[loading, setLoading] = React.useState(true)
     const navigation = useNavigation()
     async function getElectronics() {        
-        const response = await fetch("http://192.168.1.13:8000/services/Electronics", {
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/services/Electronics", {
         });
         const result = await response.json();
         setElectronics(result.services);

@@ -1,19 +1,23 @@
 import { Link, useRouter } from 'expo-router';
 import * as React from 'react'
 import { View, Image, GestureResponderEvent } from "react-native";
-import { Text, TextInput,Button } from 'react-native-paper'
+import { Text, TextInput,Button, Checkbox, Snackbar } from 'react-native-paper'
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Login() {
     const[username, setUsername] = React.useState("")
     const[password, setPassword] = React.useState("")
+    const [checked, setChecked] = React.useState(false);
+    const[isSecure, setIsSecure] = React.useState(true)
+    const [visible, setVisible] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState("");
     const router = useRouter();
 
     const loginHandler = async (event: GestureResponderEvent) => {
         event.preventDefault();
         
         try {
-            const response = await fetch("http://192.168.1.13:8000/auth/login", {
+            const response = await fetch("https://handyhub-backend-production.up.railway.app/auth/login", {
                 method: "POST",
                 body: JSON.stringify({
                 username: username,
@@ -25,11 +29,11 @@ export default function Login() {
             });
         
             if (response.status === 422) {
-                throw new Error("halo");
+                throw new Error("Validation failed");
             }
-        
+
             if (response.status !== 200 && response.status !== 201) {
-                throw new Error();
+                throw new Error("Username or password is incorrect");
             }
         
             const result = await response.json();
@@ -41,10 +45,13 @@ export default function Login() {
             router.replace("/")
             
             } catch (err) {
-            console.log(err);
+                setErrorMessage(err.message || "An error occurred");
+                setVisible(true);
             }
         };
         
+    const onDismissSnackBar = () => setVisible(false);
+    
     const logo = require("@/assets/images/splash.png")
 
     return (
@@ -92,9 +99,17 @@ export default function Login() {
                 }}
                 onChangeText={(password) => setPassword(password)}
                 mode="outlined"
-                secureTextEntry={true}
+                secureTextEntry={isSecure}
                 />
-
+                <View style={{display:"flex", flexDirection: "row", alignItems: "center", justifyContent:"flex-start", width: "95%"}}>
+                    <Checkbox
+                        status={checked ? 'checked' : 'unchecked'}
+                        onPress={() => {
+                            setChecked(!checked);
+                            setIsSecure(!isSecure)
+                    }}/>
+                    <Text>Show password</Text>
+                </View>
                 <Button mode="contained" style={{
                     backgroundColor: "#027361",
                     width: "80%",
@@ -104,6 +119,14 @@ export default function Login() {
                 </Button>
                 <Text variant="bodySmall" style={{ marginTop: 20, textAlign: 'center'}}>Don't have an account?<Link href={"Menu/register"} style={{ fontWeight: 'bold'}}> Register Now</Link></Text>
             </View>
+            <Snackbar
+                visible={visible}
+                onDismiss={onDismissSnackBar}
+                duration={3000}
+                style={{ backgroundColor: 'red' }}
+            >
+                {errorMessage}
+            </Snackbar>
         </View>
     )
 }

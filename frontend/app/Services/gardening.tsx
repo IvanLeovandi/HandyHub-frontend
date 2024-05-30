@@ -24,7 +24,7 @@ export default function Gardenings() {
     const[loading, setLoading] = React.useState(true)
     const navigation = useNavigation()
     async function getGardenings() {        
-        const response = await fetch("http://192.168.1.13:8000/services/Gardenings", {
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/services/Gardening", {
         });
         const result = await response.json();
         setGardenings(result.services);
@@ -44,7 +44,7 @@ export default function Gardenings() {
                     fontWeight: "bold",
                     marginVertical: 20
                 }}>
-                    Gardenings
+                    Gardening
                 </Text>
                 {gardenings.map((gardening) => (
                         <Pressable style={{

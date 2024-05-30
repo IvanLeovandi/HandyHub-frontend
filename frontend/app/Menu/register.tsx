@@ -3,19 +3,26 @@ import * as React from "react";
 import { View, Image, StyleSheet, ScrollView, GestureResponderEvent, TouchableOpacity } from "react-native";
 import { Text, TextInput, Button } from "react-native-paper";
 import * as ImagePicker from 'expo-image-picker';
-
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 export default function Register() {
-  const[email, setEmail]=React.useState("")
-  const[name, setName]=React.useState("")
-  const[phoneNumber, setPhoneNumber]=React.useState("")
-  const[address, setAddress]=React.useState("")
-  const[username, setUsername]=React.useState("")
-  const[password, setPassword]=React.useState("")
-  const[image, setImage] = React.useState<(string | null)>("");
+  const [email, setEmail] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [phoneNumber, setPhoneNumber] = React.useState("");
+  const [address, setAddress] = React.useState("");
+  const [username, setUsername] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [image, setImage] = React.useState<string | null>(null);
 
-  const router =useRouter()
+  const [emailError, setEmailError] = React.useState("");
+  const [nameError, setNameError] = React.useState("");
+  const [phoneNumberError, setPhoneNumberError] = React.useState("");
+  const [addressError, setAddressError] = React.useState("");
+  const [usernameError, setUsernameError] = React.useState("");
+  const [passwordError, setPasswordError] = React.useState("");
+  const [imageError, setImageError] = React.useState("");
+
+  const router = useRouter();
 
   const pickImage = async () => {
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -27,11 +34,75 @@ export default function Register() {
 
     if (!result.canceled && result.assets) {
         setImage(result.assets[0].uri);
+        setImageError(""); // Clear error when image is selected
     }
+  };
+
+  const validateInputs = async () => {
+    let isValid = true;
+
+    if (!name) {
+      setNameError("Full name is required");
+      isValid = false;
+    } else {
+      setNameError("");
+    }
+
+    if (!email) {
+      setEmailError("Email is required");
+      isValid = false;
+    } else if (!/\S+@\S+\.\S+/.test(email)) {
+      setEmailError("Email format is invalid");
+      isValid = false;
+    } else {
+      setEmailError("");
+    }
+
+    if (!phoneNumber) {
+      setPhoneNumberError("Phone number is required");
+      isValid = false;
+    } else {
+      setPhoneNumberError("");
+    }
+
+    if (!address) {
+      setAddressError("Address is required");
+      isValid = false;
+    } else {
+      setAddressError("");
+    }
+
+    if (!username) {
+      setUsernameError("Username is required");
+      isValid = false;
+    } else {
+      setUsernameError("");
+    }
+
+    if (!password) {
+      setPasswordError("Password is required");
+      isValid = false;
+    } else {
+      setPasswordError("");
+    }
+
+    if (!image) {
+      setImageError("Profile picture is required");
+      isValid = false;
+    } else {
+      setImageError("");
+    }
+
+    return isValid;
   };
 
   const signupHandler = async (event: GestureResponderEvent) => {
     event.preventDefault();
+
+    if (!(await validateInputs())) {
+      return;
+    }
+
     // Create a new FormData instance
     const formData = new FormData();
         
@@ -43,7 +114,6 @@ export default function Register() {
     formData.append('username', username);
     formData.append('password', password);
 
-
     const fileName = image?.split('/').pop();
     if (fileName) {
         const fileType = image?.includes('jpg') || image?.includes('jpeg') ? 'image/jpeg' : 'image/png';
@@ -53,21 +123,20 @@ export default function Register() {
             name: fileName,
             type: fileType,
             } as any);
-        }
+    }
+
     try {      
-      const response = await fetch("http://192.168.1.13:8000/auth/signup", {
+      const response = await fetch("https://handyhub-backend-production.up.railway.app/auth/signup", {
         method: "PUT",
         body: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
       });
+
       if (response.status === 422) {
-        throw new Error("halo");
+        setUsernameError("Username existed, please pick other username");
       }
 
       if (response.status !== 200 && response.status !== 201) {
-        throw new Error("ini juga halo");
+        throw new Error("Failed to register");
       }
 
       const result = await response.json();
@@ -124,80 +193,72 @@ export default function Register() {
         </Text>
         <TextInput
           label={"Full Name"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(name) => {
+            setName(name);
+            setNameError(""); // Clear error when user starts typing
           }}
-          onChangeText={(name)=>setName(name)}
           mode="outlined"
+          error={!!nameError}
         />
+        {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
         <TextInput
           label={"Email"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(email) => {
+            setEmail(email);
+            setEmailError(""); // Clear error when user starts typing
           }}
-          onChangeText={(email)=>setEmail(email)}
           mode="outlined"
+          error={!!emailError}
         />
+        {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
         <TextInput
           label={"Phone Number"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(phone) => {
+            setPhoneNumber(phone);
+            setPhoneNumberError(""); // Clear error when user starts typing
           }}
-          onChangeText={(phone)=>setPhoneNumber(phone)}
           keyboardType='numeric'
           mode="outlined"
+          error={!!phoneNumberError}
         />
+        {phoneNumberError ? <Text style={styles.errorText}>{phoneNumberError}</Text> : null}
         <TextInput
           label={"Address"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(address) => {
+            setAddress(address);
+            setAddressError(""); // Clear error when user starts typing
           }}
-          onChangeText={(address)=>setAddress(address)}
           mode="outlined"
+          error={!!addressError}
         />
+        {addressError ? <Text style={styles.errorText}>{addressError}</Text> : null}
         <TextInput
           label={"Username"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(username) => {
+            setUsername(username);
+            setUsernameError(""); // Clear error when user starts typing
           }}
-          onChangeText={(username)=>setUsername(username)}
           mode="outlined"
+          error={!!usernameError}
         />
-
+        {usernameError ? <Text style={styles.errorText}>{usernameError}</Text> : null}
         <TextInput
           label={"Password"}
-          style={{
-            backgroundColor: "#fff",
-            borderRadius: 10,
-            marginHorizontal: 10,
-            marginVertical: 10,
-            width: "90%",
+          style={styles.input}
+          onChangeText={(password) => {
+            setPassword(password);
+            setPasswordError(""); // Clear error when user starts typing
           }}
-          onChangeText={(password)=>setPassword(password)}
           secureTextEntry={true}
           mode="outlined"
+          error={!!passwordError}
         />
-
+        {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
         <View style={styles.container}>
             <Text style={styles.title}>Upload Picture</Text>
             <View style={styles.imageRow}>
@@ -209,6 +270,7 @@ export default function Register() {
                     )}
                 </TouchableOpacity>
             </View>
+            {imageError ? <Text style={styles.errorText}>{imageError}</Text> : null}
         </View>
 
         <Button
@@ -238,40 +300,54 @@ export default function Register() {
 }
 
 const styles = StyleSheet.create({
+  input: {
+    backgroundColor: "#fff",
+    borderRadius: 10,
+    marginHorizontal: 10,
+    marginVertical: 10,
+    width: "90%",
+  },
+  errorText: {
+    color: 'red',
+    marginLeft: 10,
+    marginBottom: 10,
+    textAlign: "left",
+    width: "90%"
+  },
   container: {
-      flex: 1,
-      alignItems: 'center',
-      justifyContent: 'center',
-      paddingHorizontal: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingHorizontal: 20,
   },
   title: {
-      fontSize: 20,
-      fontWeight: 'bold',
-      marginBottom: 20,
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 20,
   },
   imageRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginBottom: 20,
   },
   imagePlaceholder: {
-      width: 80,
-      height: 80,
-      backgroundColor: '#ddd',
-      alignItems: 'center',
-      justifyContent: 'center',
-      marginHorizontal: 4,
-      borderRadius: 10,
-      borderColor: '#027361',
-      borderWidth: 1.5,
+    width: 80,
+    height: 80,
+    backgroundColor: '#ddd',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginHorizontal: 4,
+    borderRadius: 10,
+    borderColor: '#027361',
+    borderWidth: 1.5,
   },
   image: {
-      width: 80,
-      height: 80,
-      borderRadius: 10,
+    width: 80,
+    height: 80,
+    borderRadius: 10,
   },
   imageText: {
-      fontSize: 30,
-      color: '#027361',
+    fontSize: 30,
+    color: '#027361',
   },
 });

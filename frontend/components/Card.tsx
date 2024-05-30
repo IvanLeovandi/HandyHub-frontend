@@ -18,9 +18,10 @@ export default function Card({props}: any) {
             flexDirection: "row",
             borderWidth: 1,
             borderColor:"#027361",
-            borderRadius:10
+            borderRadius:10,
+            overflow: "hidden"
         }}>
-            <Image src={`http://192.168.1.13:8000/images/${props?.images[0]}`} style={{width: 120, height: 120}}/>
+            <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.images[0]}`} style={{width: 120, height: 120}}/>
             <View style={{
             
             }}>

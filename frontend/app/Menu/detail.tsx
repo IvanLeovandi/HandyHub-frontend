@@ -71,7 +71,7 @@ const Detail : React.FC<Props>= ({route}) => {
   });
   const [isFavorite, setIsFavorite] = useState(route.params.isFavourite || false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [rating, setRating] = useState(0); //buat submit
+  const [rating, setRating] = useState(3); //buat submit
   const [comment, setComment] = useState(""); //buat submit
   const [userReview, setUserReview] = useState<ReviewArray>([]);
   const [isSubmit, setIsSubmit] = useState(false)
@@ -81,15 +81,14 @@ const Detail : React.FC<Props>= ({route}) => {
   
   async function getServiceDetail() {    
 
-    const response = await fetch(`http://192.168.1.13:8000/service/${route.params.id}`);
-    const reviewResponse = await fetch(`http://192.168.1.13:8000/review/${route.params.id}`);
+    const response = await fetch(`https://handyhub-backend-production.up.railway.app/service/${route.params.id}`);
+    const reviewResponse = await fetch(`https://handyhub-backend-production.up.railway.app/review/${route.params.id}`);
     const result = await response.json();
     const reviewResult = await reviewResponse.json();
     setService(result.service);
     setUserReview(reviewResult.review);
     setLoading(false)
   }
-  
 
   React.useEffect(() => {
     getServiceDetail();
@@ -105,7 +104,7 @@ const Detail : React.FC<Props>= ({route}) => {
       }
 
       if (!isFavorite) {
-        const response = await fetch(`http://192.168.1.13:8000/favorite/${route.params.id}`, {
+        const response = await fetch(`https://handyhub-backend-production.up.railway.app/favorite/${route.params.id}`, {
           method: "POST",
           body: JSON.stringify({
             isFavorite: isFavorite
@@ -120,14 +119,14 @@ const Detail : React.FC<Props>= ({route}) => {
         }
       }
       if (isFavorite) {
-        const response = await fetch(`http://192.168.1.13:8000/favorite/${route.params.id}`, {method: "DELETE", headers: {Authorization: "Bearer " + token}})
+        const response = await fetch(`https://handyhub-backend-production.up.railway.app/favorite/${route.params.id}`, {method: "DELETE", headers: {Authorization: "Bearer " + token}})
         setIsFavorite(false) 
       }
       return; 
     } catch (error) {
       console.log(error);
     }
-  }  
+  }
 
   const modalHandler = async (event: GestureResponderEvent) => {
     event.preventDefault()
@@ -137,6 +136,7 @@ const Detail : React.FC<Props>= ({route}) => {
         //redirect ke login
         router.push("Menu/login")
       }
+      setModalVisible(true)
     } catch (err) {
       console.log(err)
     }
@@ -150,7 +150,7 @@ const Detail : React.FC<Props>= ({route}) => {
         //redirect ke login
         router.push("Menu/login")
       }
-      const response = await fetch(`http://192.168.1.13:8000/review/${route.params.id}`, {
+      const response = await fetch(`https://handyhub-backend-production.up.railway.app/review/${route.params.id}`, {
           method: "POST",
           body: JSON.stringify({
             rating: rating,
@@ -180,7 +180,7 @@ const Detail : React.FC<Props>= ({route}) => {
   const deleteHandler = async (id: string) => {
     try {
       const token = await AsyncStorage.getItem("token");
-      const response = await fetch(`http://192.168.1.13:8000/review/${id}`, {method: "DELETE", headers: {Authorization: "Bearer " + token}});
+      const response = await fetch(`https://handyhub-backend-production.up.railway.app/review/${id}`, {method: "DELETE", headers: {Authorization: "Bearer " + token}});
       if (!response.ok) {
         throw new Error();
       }
@@ -197,7 +197,7 @@ const Detail : React.FC<Props>= ({route}) => {
       return;
     }
     
-    const response = await fetch("http://192.168.1.13:8000/profile", {
+    const response = await fetch("https://handyhub-backend-production.up.railway.app/profile", {
         headers: {
           Authorization : `Bearer ${token}`,
         },
@@ -206,6 +206,8 @@ const Detail : React.FC<Props>= ({route}) => {
     setUser(result.user);
     setLoading(false)
   }
+  console.log(userReview);
+  
 
   const navigation : any = useNavigation();
   return (
@@ -222,7 +224,7 @@ const Detail : React.FC<Props>= ({route}) => {
         {service.images.map((item, index) => {
           return (
           <View key={index} style={styles.carouselItem}>
-            <Image src={`http://192.168.1.13:8000/images/${item}`} style={styles.carouselImage} />
+            <Image src={`https://handyhub-backend-production.up.railway.app/images/${item}`} style={styles.carouselImage} />
           </View>
           )
         }
@@ -247,24 +249,33 @@ const Detail : React.FC<Props>= ({route}) => {
         </Text>
       </View>
       <View style={styles.reviewSection}>
-        <View style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexDirection: "row" }}>
+        <View>
           <Text style={styles.reviewTitle}>Reviews:</Text>
-          {user.id !== service.provider._id && (
+          {user.id !== service.provider._id ? (
           <Button mode='contained' buttonColor='#027361' onPress={modalHandler}>
             <Text style={{ color: "white" }}>Write a Review</Text>
             </Button>
-          )}
+          ) : 
+            <View>
+              <Text style={{color: "black", marginTop: 8}}>There is no review yet</Text>
+            </View>
+          }
         </View>
-        <Pressable style={styles.viewAllText}>
+        {/* <Pressable style={styles.viewAllText}>
           <Text style={{color: "#027361"}}>View All</Text>
-        </Pressable>
+        </Pressable> */}
         {userReview?.map((review) => (
-          <Card style={styles.reviewCard}>
-            <Card.Title
-              title={review.name}
-              subtitle={review.review}
-              left={(props) => <Avatar.Icon {...props} icon="star" />}
-              />
+          <Card style={styles.reviewCard} key={review.id}>
+            <View>
+              <Card.Title
+                title={review.name}
+                subtitle={review.review}
+                left={(props) => <Avatar.Icon {...props} icon="star" color='gold' style={{backgroundColor: "#027361"}} />}
+                />
+              <Card.Content>
+                <Text style={{marginTop: -20, marginLeft: 8, marginBottom: 12}}>{review.rating}/5</Text>
+              </Card.Content>
+            </View>
             <Card.Content>
               {user.id === review.userId  && (
                 <Button mode='contained' buttonColor='red' onPress={() => deleteHandler(review.id)}><Text style={{color: "white"}}>Delete Review</Text></Button>
@@ -280,7 +291,7 @@ const Detail : React.FC<Props>= ({route}) => {
         {user.id !== service.provider._id &&(
           <Button mode="contained" style={styles.bookButton} onPress={() => {
             navigation.push("MenuStack", {screen: "Order", params:{service}})
-          }}>Book</Button>)
+          }}><Text style={{color: "white"}}>Book</Text></Button>)
         }
       </View>
     </ScrollView>
@@ -295,6 +306,8 @@ const Detail : React.FC<Props>= ({route}) => {
             showRating
             onFinishRating={setRating}
             style={{ paddingVertical: 10 }}
+            ratingTextColor='black'
+            startingValue={3}
           />
           <TextInput
             label="Comment"
@@ -302,9 +315,12 @@ const Detail : React.FC<Props>= ({route}) => {
             mode="outlined"
             multiline
             style={styles.commentInput}
+            outlineColor='#027361'
+            activeOutlineColor='#027361'
+            textColor='black'
           />
           <Button mode="contained" onPress={addReviewHandler} style={styles.submitButton}>
-            Submit Review
+            <Text style={{color: "white"}}>Submit Review</Text>
           </Button>
         </Modal>
       </Portal>
@@ -335,7 +351,7 @@ const styles = StyleSheet.create({
   carouselImage: {
     width: screenWidth * 0.8,
     height: 400,
-    objectFit: "contain"
+    objectFit: "cover"
   },
   carouselTitle: {
     marginTop: 8,
@@ -376,6 +392,7 @@ const styles = StyleSheet.create({
   },
   reviewCard: {
     marginVertical: 8,
+    backgroundColor: "#027361",
   },
   buttonContainer: {
     flexDirection: 'row',
@@ -409,10 +426,12 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 10,
+    color: "#027361"
   },
   commentInput: {
     height: 100,
     marginBottom: 20,
+    backgroundColor: "white",
   },
   submitButton: {
     backgroundColor: '#027361',

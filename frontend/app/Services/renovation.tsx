@@ -22,7 +22,7 @@ export default function Gardening() {
     const[renovations, setRenovations] = React.useState<RenovationsArray>([])
     const[loading, setLoading] = React.useState(true)
     async function getRenovations() {        
-        const response = await fetch("http://192.168.1.13:8000/services/Renovation", {
+        const response = await fetch("https://handyhub-backend-production.up.railway.app/services/Renovation", {
         });
         const result = await response.json();
         setRenovations(result.services);
