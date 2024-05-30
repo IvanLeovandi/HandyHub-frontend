@@ -22,6 +22,8 @@ import { NavigationContainer } from "@react-navigation/native";
 import Payment from "./Menu/payment";
 import Plumbing from "./Services/plumbing";
 import Cleaning from "./Services/cleaning";
+import Relocation from "./Services/relocation";
+import Others from "./Services/others";
 
 export type MenuStackParams = {
   Home: Screen
@@ -77,6 +79,8 @@ function ServiceStackGroup(){
       <ServiceStack.Screen name="Cleaning" component={Cleaning}/>
       <ServiceStack.Screen name="Gardening" component={Gardening}/>
       <ServiceStack.Screen name="Renovation" component={Renovation}/>
+      <ServiceStack.Screen name="Relocation" component={Relocation}/>
+      <ServiceStack.Screen name="Others" component={Others}/>
       <ServiceStack.Screen name="Apply" component={Apply} />
     </ServiceStack.Navigator>
   )

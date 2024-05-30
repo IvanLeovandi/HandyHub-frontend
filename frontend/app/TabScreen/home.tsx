@@ -166,9 +166,13 @@ export default function Home() {
         }}>
         <Text variant="headlineLarge" style={{fontWeight: 'bold', marginTop: 20, marginBottom: 10}}>Featured</Text>
             {services.map((service) => (
-                <View style={{marginBottom: 8}}>
+                <Pressable style={{marginBottom: 8}}
+                    onPress={()=>{navigation.push("MenuStack", {screen: "Detail", params: {
+                        id:service._id
+                    }})}}
+                >
                     <Card props={service}/>      
-                </View>
+                </Pressable>
             ))}
         </View>
         </ScrollView>
