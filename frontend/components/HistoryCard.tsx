@@ -61,7 +61,7 @@ export default function HistoryCard({props, token}: any) {
             borderRadius:10,
             overflow: "hidden"
         }}>
-            <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.image}`} style={{width: 120, height: 120, marginRight: 12}}/>
+            <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.image[0]}`} style={{width: 120, height: 120, marginRight: 12}}/>
             <View style={{
             }}>
             <View style={{paddingRight: 12, width: "75%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems:"center"}}>

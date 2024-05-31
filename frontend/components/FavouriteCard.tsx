@@ -22,7 +22,7 @@ export default function FavouriteCard({props}: any) {
         }}
             
         >
-            <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.images}`} style={{width: 120, height: 120}}/>
+            <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.images[0]}`} style={{width: 120, height: 120}}/>
             <View style={{
 
             }}>
