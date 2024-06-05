@@ -252,7 +252,7 @@ const Detail : React.FC<Props>= ({route}) => {
         <View>
           <Text style={styles.reviewTitle}>Reviews:</Text>
           {user.id !== service.provider._id ? (
-          <Button mode='contained' buttonColor='#027361' onPress={modalHandler}>
+          <Button mode='contained' buttonColor='#027361' onPress={modalHandler} style={{width:"50%"}}>
             <Text style={{ color: "white" }}>Write a Review</Text>
             </Button>
           ) : 
