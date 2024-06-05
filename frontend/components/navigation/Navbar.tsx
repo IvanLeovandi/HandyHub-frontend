@@ -83,7 +83,6 @@ export default function Navbar() {
                             icon="email"
                             iconColor="white"
                             size={26}
-                            onPress={() => console.log('Pressed')}
                         />
                         {isAuth ? <IconButton
                             icon="logout"

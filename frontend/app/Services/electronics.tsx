@@ -35,7 +35,6 @@ export default function Electronics() {
         React.useEffect(() => {
             getElectronics();
         }, [])
-    console.log(electronics);
     
     return (
         <SafeAreaView style={{
@@ -49,9 +48,7 @@ export default function Electronics() {
                 }}>
                     Electronics
                 </Text>
-                {electronics.map((electronic) => {
-                    console.log(electronic.images[0]);
-                    
+                {electronics.map((electronic) => {                    
                     return (
                         <Pressable style={{
                             marginVertical: 8

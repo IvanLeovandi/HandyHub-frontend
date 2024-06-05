@@ -75,7 +75,6 @@ export default function Home() {
         React.useEffect(() => {
             getServices();
         }, [])
-    console.log(services);
 
     React.useEffect(() => {
         tokenChecker();
@@ -90,10 +89,7 @@ export default function Home() {
         setIsAuth(false);
     };
 
-    const navigation = useNavigation()
-
-    console.log(token);
-    
+    const navigation = useNavigation()    
 
     return (
         <ScrollView
@@ -166,7 +162,7 @@ export default function Home() {
         }}>
         <Text variant="headlineLarge" style={{fontWeight: 'bold', marginTop: 20, marginBottom: 10}}>Featured</Text>
             {services.map((service) => (
-                <Pressable style={{marginBottom: 8}}
+                <Pressable style={{marginBottom: 8}} key={service._id}
                     onPress={()=>{navigation.push("MenuStack", {screen: "Detail", params: {
                         id:service._id
                     }})}}

@@ -44,7 +44,6 @@ export default function HistoryCard({props, token}: any) {
                 body: JSON.stringify({ status: "Completed" })
             });
             const result = await response.json();
-            console.log(result);
             setFinished(true)
             setVisible(false)
             } catch (err) {

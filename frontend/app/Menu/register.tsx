@@ -140,7 +140,6 @@ export default function Register() {
       }
 
       const result = await response.json();
-      console.log(result);
       router.replace("/Menu/registered")
     } catch (error) {
       console.log(error);
