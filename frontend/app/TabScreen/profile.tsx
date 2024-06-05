@@ -127,9 +127,7 @@ export default function Profile() {
     setPrice(service.price.toString())
     setSpecialty(service.specialty);
     setDescription(service.description);
-    setVisible(true);
-    console.log(service._id);
-    
+    setVisible(true);    
   };
 
   const hideDialog = () => setVisible(false);
@@ -145,7 +143,6 @@ export default function Profile() {
         body: JSON.stringify({ name, specialty, price, description })
       });
       const result = await response.json();
-      console.log(result);
       hideDialog();
     } catch (err) {
       console.log(err);
@@ -295,14 +292,16 @@ export default function Profile() {
           </View>
           {section === 'UserDetail' ? (
             <UserDetailComponent />
-          ) : 
+          ) : !orderLoading && orders ?
             orders.map((order) => (
               <View style={{ display: "flex",
               flexDirection: "column",
-              width: "100%",}}>
+              width: "100%",}} key={order._id}>
                 <OrderCard props={order}/>
               </View>
             ))
+            :
+            <Text style={{color: "black"}}>You have no order yet</Text>
           }  
         </ScrollView>
 

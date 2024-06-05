@@ -34,7 +34,6 @@ export default function Others() {
         React.useEffect(() => {
             getOthers();
         }, [])
-    console.log(others);
     
     return (
         <SafeAreaView style={{
@@ -48,9 +47,7 @@ export default function Others() {
                 }}>
                     Others
                 </Text>
-                {others.map((other) => {
-                    console.log(other.images[0]);
-                    
+                {others.map((other) => {                    
                     return (
                         <Pressable style={{
                             marginVertical: 8

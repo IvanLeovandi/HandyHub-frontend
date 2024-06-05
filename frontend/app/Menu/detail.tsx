@@ -205,9 +205,7 @@ const Detail : React.FC<Props>= ({route}) => {
     const result = await response.json();
     setUser(result.user);
     setLoading(false)
-  }
-  console.log(userReview);
-  
+  }  
 
   const navigation : any = useNavigation();
   return (

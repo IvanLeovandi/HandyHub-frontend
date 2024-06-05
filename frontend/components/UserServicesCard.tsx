@@ -16,7 +16,6 @@ export default function UserServicesCard({ props, token, showDialog }: any) {
                 headers: {Authorization : `Bearer ${token}`}
             });
             const result = await response.json();
-            console.log(result)
         } catch (err) {
             console.log(err)
         }

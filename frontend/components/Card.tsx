@@ -7,10 +7,7 @@ export default function Card({props}: any) {
     // const[image,setImage] = React.useState(require("@/assets/images/featured-placeholder.png"))
     // if(props.image){
     //     setImage(props.image)
-    // }
-
-    console.log(props);
-    
+    // }    
     
     return (
         <View style={{

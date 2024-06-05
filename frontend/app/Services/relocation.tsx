@@ -34,7 +34,6 @@ export default function Relocation() {
         React.useEffect(() => {
             getRelocation();
         }, [])
-    console.log(relocation);
     
     return (
         <SafeAreaView style={{
@@ -48,9 +47,7 @@ export default function Relocation() {
                 }}>
                     Relocation
                 </Text>
-                {relocation.map((relocate) => {
-                    console.log(relocate.images[0]);
-                    
+                {relocation.map((relocate) => {                    
                     return (
                         <Pressable style={{
                             marginVertical: 8
