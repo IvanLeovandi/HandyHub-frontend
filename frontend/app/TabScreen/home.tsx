@@ -78,7 +78,7 @@ export default function Home() {
 
     React.useEffect(() => {
         tokenChecker();
-    }, [userId]);
+    }, [services]);
 
     const logoutHandler = async () => {
         await AsyncStorage.removeItem("token");

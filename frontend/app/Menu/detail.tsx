@@ -205,7 +205,7 @@ const Detail : React.FC<Props>= ({route}) => {
     const result = await response.json();
     setUser(result.user);
     setLoading(false)
-  }  
+  }    
 
   const navigation : any = useNavigation();
   return (
@@ -247,46 +247,55 @@ const Detail : React.FC<Props>= ({route}) => {
         </Text>
       </View>
       <View style={styles.reviewSection}>
-        <View>
+        <View style={{display: "flex", flexDirection: "row", justifyContent: "space-between"}}>
           <Text style={styles.reviewTitle}>Reviews:</Text>
-          {user.id !== service.provider._id ? (
-          <Button mode='contained' buttonColor='#027361' onPress={modalHandler} style={{width:"50%"}}>
+          {user?.id !== service?.provider?._id ? (
+          <Button mode='contained' buttonColor='#027361' onPress={modalHandler} style={{width:"40%"}}>
             <Text style={{ color: "white" }}>Write a Review</Text>
-            </Button>
-          ) : 
-            <View>
-              <Text style={{color: "black", marginTop: 8}}>There is no review yet</Text>
-            </View>
+          </Button>
+          ) : (
+            null
+          )
           }
         </View>
         {/* <Pressable style={styles.viewAllText}>
           <Text style={{color: "#027361"}}>View All</Text>
         </Pressable> */}
-        {userReview?.map((review) => (
-          <Card style={styles.reviewCard} key={review.id}>
+        {userReview.length > 0 ? (
+          <View>
+              {userReview?.map((review) => (
+              <Card style={styles.reviewCard} key={review.id}>
+                <View>
+                  <Card.Title
+                    title={review.name}
+                    subtitle={review.review}
+                    left={(props) => <Avatar.Icon {...props} icon="star" color='gold' style={{backgroundColor: "#027361"}} />}
+                    />
+                  <Card.Content>
+                    <Text style={{marginTop: -20, marginLeft: 8, marginBottom: 12}}>{review.rating}/5</Text>
+                  </Card.Content>
+                </View>
+                <Card.Content>
+                  {user.id === review.userId  && (
+                    <Button mode='contained' buttonColor='red' onPress={() => deleteHandler(review.id)}><Text style={{color: "white"}}>Delete Review</Text></Button>
+                  )
+                  }
+                </Card.Content>
+              </Card>
+            )
+            )}
+          </View>
+
+        ) : (
             <View>
-              <Card.Title
-                title={review.name}
-                subtitle={review.review}
-                left={(props) => <Avatar.Icon {...props} icon="star" color='gold' style={{backgroundColor: "#027361"}} />}
-                />
-              <Card.Content>
-                <Text style={{marginTop: -20, marginLeft: 8, marginBottom: 12}}>{review.rating}/5</Text>
-              </Card.Content>
+              <Text style={{color: "black", marginTop: 8}}>There is no review yet</Text>
             </View>
-            <Card.Content>
-              {user.id === review.userId  && (
-                <Button mode='contained' buttonColor='red' onPress={() => deleteHandler(review.id)}><Text style={{color: "white"}}>Delete Review</Text></Button>
-              )
-              }
-            </Card.Content>
-          </Card>
-        )
         )}
+        
       </View>
       <View style={styles.buttonContainer}>
         {/* <Button mode="contained" style={styles.chatButton} onPress={() => {}}>Chat</Button> */}
-        {user.id !== service.provider._id &&(
+        {user?.id !== service.provider._id &&(
           <Button mode="contained" style={styles.bookButton} onPress={() => {
             navigation.push("MenuStack", {screen: "Order", params:{service}})
           }}><Text style={{color: "white"}}>Book</Text></Button>)

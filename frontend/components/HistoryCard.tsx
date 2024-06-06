@@ -12,6 +12,15 @@ export default function HistoryCard({props, token}: any) {
     // const newDate = `${date} ${month} ${year} `
     const[finished, setFinished] = React.useState(false)
     const[visible, setVisible] = React.useState(false)
+    const[justifyContent, setJustifyContent] = React.useState("space-between")
+
+    const visibleChecker = () => {
+        if(visible) {
+            setJustifyContent("space-between")
+        } else {
+            setJustifyContent("flex-end")
+        }
+    }
 
     const dateChecker = () => {
         const now = new Date()
@@ -30,8 +39,9 @@ export default function HistoryCard({props, token}: any) {
     // }
     React.useEffect(()=>{
         dateChecker()
+        visibleChecker()
         // finishChecker()
-    }, [])
+    }, [props])
     
     const finishedHandler = async () => {
         try {
@@ -45,11 +55,12 @@ export default function HistoryCard({props, token}: any) {
             });
             const result = await response.json();
             setFinished(true)
-            setVisible(false)
             } catch (err) {
             console.log(err);
             }
-        };
+            setVisible(false)
+            setJustifyContent('flex-end')
+        };        
     
     return (
         <View style={{
@@ -63,17 +74,17 @@ export default function HistoryCard({props, token}: any) {
             <Image src={`https://handyhub-backend-production.up.railway.app/images/${props?.image[0]}`} style={{width: 120, height: 120, marginRight: 12}}/>
             <View style={{
             }}>
-            <View style={{paddingRight: 12, width: "75%", display: "flex", flexDirection: "row", justifyContent: "space-between", alignItems:"center"}}>
-                <Text variant="titleMedium" style={{fontWeight: 'bold', marginTop: 8}}>{props.providerName}</Text>
-                {props.status === "Scheduled" ? 
-                <Text variant="titleMedium" style={{fontWeight: "bold", marginTop: 8, color: `#E8451E`}}>{props.status}</Text>
-                : 
-                <Text variant="titleMedium" style={{fontWeight: "bold", marginTop: 8, color: `#027361`}}>{props.status}</Text>
-            }
+            <View style={{paddingRight: 12}}>
+                <Text variant="titleMedium" style={{fontWeight: 'bold', marginTop: 8}}>{props.serviceName}</Text>
             </View>
             <Text variant="titleSmall" style={{fontWeight: "200"}}>{oldDate}</Text>
             <Text variant="labelSmall" style={{fontWeight: "200", marginTop: 2}}>Price: <Text variant="labelSmall">Rp {props.amount}</Text></Text>
-            <View style={{marginTop: 4, display: "flex", flexDirection:"row", justifyContent:"flex-end", width: "75%"}}>
+            <View style={{marginTop: 4, display: "flex", flexDirection:"row", justifyContent:`${justifyContent}`, width: "75%"}}>
+                {props.status === "Scheduled" ? 
+                    <Text variant="titleMedium" style={{fontWeight: "bold", marginTop: 8, color: `#E8451E`}}>{props.status}</Text>
+                    : 
+                    <Text variant="titleMedium" style={{fontWeight: "bold", marginTop: 8, color: `#027361`}}>{props.status}</Text>
+                }
                 { props.status === "Scheduled" && visible && ( 
                     <Button buttonColor="#027361" compact style={{maxWidth: 100}} onPress={finishedHandler}>
                         <Text variant="labelMedium" style={{color: "white"}}>Finish Order</Text>

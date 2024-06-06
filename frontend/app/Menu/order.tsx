@@ -67,9 +67,9 @@ const Order : React.FC<Props> = ({route}) => {
             ? 
             <ScrollView contentContainerStyle={styles.container}>
                 <View style={styles.profileSection}>
-                    <Image src={`https://handyhub-backend-production.up.railway.app/images/${route.params.service.images}`} style={styles.profileImage} />
+                    <Image src={`https://handyhub-backend-production.up.railway.app/images/${route.params.service.images[0]}`} style={styles.profileImage} />
                     <View style={styles.profileTextContainer}>
-                    <Text style={styles.profileName}>{route.params.service.provider.name}</Text>
+                    <Text style={styles.profileName}>{route.params.service.name}</Text>
                     <Text style={styles.profileDetail}>
                         <Text style={styles.profileDetailLabel}>Category: </Text>{route.params.service.category.name}
                     </Text>

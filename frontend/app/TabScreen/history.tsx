@@ -1,5 +1,5 @@
 import HistoryCard from '@/components/HistoryCard';
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {Text} from "react-native-paper"
 import { View, Image, Pressable, ScrollView } from "react-native";
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -8,16 +8,12 @@ import { useRouter } from 'expo-router';
 
 interface History {
   _id: string,
-  service: {
-    image: string,
-    provider: {
-      name:string
-    }
-  },
+  serviceName: string,
+  providerName: string,
   serviceDate: Date,
   amount: number,
   status: string,
-  rating: number
+  rating: number,
 }
 
 interface HistoryArray extends Array<History>{};
@@ -43,8 +39,8 @@ export default function History() {
         Authorization : `Bearer ${token}`,
       },
     });
-    const result = await response.json();        
-    const history = result.orders.map((item: any) => {return {_id: item._id, providerName : item.serviceId.provider.name, amount: item.amount, date: item.serviceDate, status: item.status, rating: 5, image: item.serviceId.images}} )
+    const result = await response.json();            
+    const history = result.orders.map((item: any) => {return {_id: item._id, serviceName : item.serviceId.name,providerName : item.serviceId.provider.name, amount: item.amount, date: item.serviceDate, status: item.status, rating: item.serviceId.rating, image: item.serviceId.images}} )
     setHistoryOrder(history);
     setLoading(false)
   }  
